@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Create Voting Form</title>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://kit.fontawesome.com/a2d9d5b58b.js" crossorigin="anonymous"></script>
+</head>
+
+<body class="bg-gray-100">
+    <div id="app" class="p-8">
+        <!-- Header -->
+        <header class="flex justify-between items-center mb-6">
+            <div>
+                <h1 class="text-2xl font-bold">Create Voting Form</h1>
+                <p class="text-gray-600">Design and configure a new voting form for elections</p>
+            </div>
+            <div class="flex items-center space-x-3">
+                <img src="https://via.placeholder.com/40" alt="User" class="rounded-full">
+                <div>
+                    <p class="font-semibold">Niel Ezequiel</p>
+                    <p class="text-sm text-gray-500">Administrator</p>
+                </div>
+            </div>
+        </header>
+
+        <div class="grid grid-cols-3 gap-6">
+            <!-- Left Column -->
+            <div class="col-span-2 space-y-6">
+                <!-- Basic Information -->
+                <section>
+                    <h2>Basic Information</h2>
+                    <div class="grid grid-cols-2 gap-4">
+                        <input v-model="formTitle" type="text" placeholder="Form Title" class="border rounded-lg p-2">
+                        <input v-model="description" type="text" placeholder="Description"
+                            class="border rounded-lg p-2">
+                        <input v-model="startDate" type="datetime-local" class="border rounded-lg p-2 w-60">
+                        <input v-model="endDate" type="datetime-local" class="border rounded-lg p-2 w-60 h10">
+                    </div>
+                </section>
+
+                <!-- Positions & Candidates -->
+                <section>
+                    <div class="flex justify-between items-center mb-4">
+                        <h2 class="font-semibold">Positions & Candidates</h2>
+                        <button @click="addPosition"
+                            class="bg-gray-800 text-white px-4 py-2 rounded-lg text-sm"> + Add
+                            Position</button>
+                    </div>
+
+                    <div class="space-y-4">
+                        <div v-for="(position, pIndex) in positions" :key="pIndex">
+                            <div class="flex justify-between items-center mb-2">
+                                <input v-model="position.title" type="text" placeholder="Position Title"
+                                    class="border p-2 rounded w-3/5 mr-2">
+                            </div>
+                            
+                            <div v-for="(candidate, cIndex) in position.candidates" :key="cIndex"
+                                class="flex items-center space-x-2 mb-2">
+                                <input v-model="position.candidates[cIndex]" type="text" placeholder="Candidate Name"
+                                    class="w-3/5 border p-2 rounded">
+                              
+                            </div>
+                            <button @click="addCandidate(pIndex)"
+                                class="bg-gray-800 text-white px-4 py-2 rounded-lg text-sm">+ Add Candidate</button>
+                        </div>
+                    </div>
+               
+
+                    <section id="linkApp" class="mb-6">
+                        <div class="flex items-center space-x-2 mb-2">
+                            <input v-model="baseURL" type="text" placeholder="https://testform.zDevelopers"
+                                class="border p-2 rounded w-3/5 mr-2">
+                            <button @click="generateLink" class="bg-gray-800 text-white px-4 py-2 rounded-lg text-sm">Generate Voters Link</button>
+                        </div>
+                    
+                        <!-- Show generated link and test button -->
+                        <div v-if="generatedLink" class="flex items-center space-x-2">
+                            <input type="text" :value="generatedLink" readonly class="border p-2 rounded w-3/5">
+                            <button @click="testLink" class="bg-blue-500 text-white px-4 py-2 rounded-lg text-sm hover:bg-blue-600">Test
+                                Form</button>
+                        </div>
+                    </section>
+
+
+                </section>
+            </div>
+
+            <!-- Right Column -->
+            <div class="space-y-6">
+
+                <!-- Form Settings -->
+                <section>
+                    <h2 class="font-semibold mb-4">Form Settings</h2>
+                    <div class="space-y-2">
+                        <label class="flex justify-between items-center">
+                            Require Authentication <input type="checkbox" v-model="requireAuth" class="toggle">
+                        </label>
+                        <label class="flex justify-between items-center">
+                            Anonymous Voting <input type="checkbox" v-model="anonymousVoting" class="toggle">
+                        </label>
+                        <label class="flex justify-between items-center">
+                            Allow Multiple Votes <input type="checkbox" v-model="allowMultiple" class="toggle">
+                        </label>
+                    </div>
+                    <div class="mt-4">
+                        <select v-model="votingMethod" class="border rounded-lg p-2 w-2/5">
+                            <option>Single Choice</option>
+                            <option>Multiple Choice</option>
+                        </select>
+                    </div>
+                </section>
+
+                <!-- Geo Location -->
+                <section>
+                    <h2 class="font-bold mb-6 text-xl">Geo Location</h2>
+                            <input type="number">
+                        
+                    <div class="bg-gray-100 h-64 mt-3 rounded-lg overflow-hidden flex items-center justify-center text-gray-400">
+                        <iframe
+                            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d61707.78195907907!2d120.94529504445836!3d14.840046682665031!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3397ac22ac27a55f%3A0x4a8611643c5c0dd0!2sSanta%20Maria%2C%20Bulacan!5e0!3m2!1sen!2sph!4v1759673883791!5m2!1sen!2sph"
+                            width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy"
+                            referrerpolicy="no-referrer-when-downgrade"></iframe>
+                    </div>
+
+                    <div class="mt-3 mb-10 text-sm text-gray-600 text-center">
+                        <p class="font-semibold">Current Radius: {{ radius }} meters</p>
+                    </div>
+
+                </section>
+
+                <!-- Form Actions -->
+                <section>
+                    <h2 class="font-semibold mb-4">Form Actions</h2>
+                    <div class="space-y-2">
+                        <button class="w-full bg-gray-200 text-gray-800 py-2 rounded">Duplicate Form</button>
+                        <button class="w-full bg-gray-200 text-gray-700 py-2 rounded">Export Template</button>
+                        <button @click="testForm" class="w-full bg-gray-200 text-gray-700 py-2 rounded">Test Form</button>
+
+                    </div>
+                </section>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const { createApp } = Vue;
+
+        createApp({
+            data() {
+                return {
+                    formTitle: '',
+                    description: '',
+                    startDate: '',
+                    endDate: '',
+                    positions: [],
+                    radius: 5,
+                    requireAuth: false,
+                    anonymousVoting: false,
+                    allowMultiple: false,
+                    votingMethod: 'Single Choice',
+
+                    // Link generation
+                    baseURL: 'https://testform.zDevelopers',
+                    generatedLink: ''
+                }
+            },
+            
+            methods: {
+                // Positions & Candidates
+                addPosition() {
+                    this.positions.push({ title: '', candidates: [] });
+                },
+                removePosition(index) {
+                    this.positions.splice(index, 1);
+                },
+                addCandidate(posIndex) {
+                    this.positions[posIndex].candidates.push('');
+                },
+                removeCandidate(posIndex, candIndex) {
+                    this.positions[posIndex].candidates.splice(candIndex, 1);
+                },
+
+                // Geolocation
+                increaseRadius() {
+                    this.radius += 5;
+                },
+                decreaseRadius() {
+                    if (this.radius > 5) this.radius -= 5;
+                },
+
+                // Link generation
+                generateLink() {
+                    const randomId = Math.floor(Math.random() * 10000);
+                    this.generatedLink = `${this.baseURL}?formId=${randomId}`;
+                },
+
+                testLink() {
+                    if (this.generatedLink) {
+                        window.open(this.generatedLink, "_blank");
+                    }
+                },
+
+
+                // Validate form fields
+
+                validateForm() {
+                    if (!this.formTitle.trim() || !this.description.trim() || !this.startDate || !this.endDate) {
+                        alert("Please fill in all basic information fields.");
+                        return false;
+                    }
+
+                    if (this.positions.length === 0) {
+                        alert("Please add at least one position.");
+                        return false;
+                    }
+
+                    for (const pos of this.positions) {
+                        if (!pos.title.trim()) {
+                            alert("All positions must have a title.");
+                            return false;
+                        }
+                        if (pos.candidates.length === 0) {
+                            alert(`Position "${pos.title}" must have at least one candidate.`);
+                            return false;
+                        }
+                        for (const cand of pos.candidates) {
+                            if (!cand.trim()) {
+                                alert(`All candidates in position "${pos.title}" must have a name.`);
+                                return false;
+                            }
+                        }
+                    }
+
+                    return true;
+                },
+
+                testForm() {
+                    if (!this.validateForm()) return;
+                    this.generateLink();
+                    window.open(this.generatedLink, "_blank");
+                }
+            }
+        }).mount('#app');
+    </script>
+
+
+</body>
+
+</html>
